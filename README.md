@@ -32,4 +32,9 @@ Checks branch name and if there's jira task mentioned in the branch it will past
 
 ### commit-msg
 
-Checks if any jira tasks are mentioned in the commit msg and for each adds link to the end of the commit msg. The links will be nicely formated on github
+Checks if any jira tasks are mentioned in the commit msg and for each adds link to the end of the commit msg. The links will be nicely formated on github.
+To use it set env variable in .bashrc or whatever (maybe profile as well if you're using IntelliJ) `JIRA_BROWSE_URL` to something that makes sense, like:
+
+```bash
+export JIRA_BROWSE_URL="https://path.to.jira/browse/"
+```
