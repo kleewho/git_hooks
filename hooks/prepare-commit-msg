@@ -4,7 +4,11 @@ import sys
 import re
 from subprocess import check_output
 
-symbolic_ref = check_output(['git', 'symbolic-ref', 'HEAD'])
+try:
+    symbolic_ref = check_output(['git', 'symbolic-ref', 'HEAD'])
+except:
+    sys.exit()
+
 matched = re.search("TGD-[0-9]*$", symbolic_ref)
 
 if not matched:
