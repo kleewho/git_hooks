@@ -5,18 +5,19 @@ import re
 import os
 
 jira_browse_url = os.environ.get('JIRA_BROWSE_URL')
-tgd = "TGD-[0-9]*"
+tgd = "(?:SPARK|TGD)-[0-9]*"
 
 with open(sys.argv[1], 'r') as f:
     msg = "\n".join(filter(lambda x: not x.startswith('#'), f.readlines()))
 
 matches = set(re.findall(tgd, msg))
-already_present = {set(re.findall(tgd, x)).pop() for x in set(re.findall("\[{0}\]\({1}{0}\)".format(tgd, jira_browse_url), msg))}
+
+already_present = set(re.findall("\[({0})\]\({1}(?:{0})\)".format(tgd, jira_browse_url), msg))
 missing_links = matches.difference(already_present)
 
 if len(missing_links) == 0:
     sys.exit()
 
 with open(sys.argv[1], 'a') as f:
-    links = "\n".join(map(lambda x: "[{0}]({1}{0})".format(x, jira_browse_url), matches))
+    links = "\n\n".join(map(lambda x: "[{0}]({1}{0})".format(x, jira_browse_url), matches))
     f.write(links)

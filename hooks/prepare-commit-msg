@@ -9,12 +9,12 @@ try:
 except:
     sys.exit()
 
-matched = re.search("TGD-[0-9]*$", symbolic_ref)
+matched = re.findall("((?:SPARK|TGD)-[0-9]*)", symbolic_ref)
 
-if not matched:
+if len(matched) == 0:
     sys.exit()
 
-branch = symbolic_ref[matched.start():matched.end()]
+branch = matched[0]
 
 with open(sys.argv[1], 'r') as commit_file:
     commit_msg = commit_file.readlines()
