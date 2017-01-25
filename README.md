@@ -38,3 +38,7 @@ To use it set env variable in .bashrc or whatever (maybe profile as well if you'
 ```bash
 export JIRA_BROWSE_URL="https://path.to.jira/browse/"
 ```
+
+### pre-commit
+
+Validates swagger using (`swagger-tools`)[https://github.com/apigee-127/swagger-tools]
