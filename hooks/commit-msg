@@ -2,22 +2,36 @@
 
 import sys
 import re
-import os
+from subprocess import check_output
 
-jira_browse_url = os.environ.get('JIRA_BROWSE_URL')
-tgd = "(?:SPARK|TGD)-[0-9]*"
+try:
+    jira_browse_url = check_output(['git', 'config', '--get', "githook.jiraurl"])[0:-1]
+except:
+    sys.exit()
 
-with open(sys.argv[1], 'r') as f:
-    msg = "\n".join(filter(lambda x: not x.startswith('#'), f.readlines()))
+try:
+    jira_identifier = check_output(['git', 'config', '--get', "githook.jiraidregex"])[0:-1]
+except:
+    sys.exit()
 
-matches = set(re.findall(tgd, msg))
+file_path = sys.argv[1]
 
-already_present = set(re.findall("\[({0})\]\({1}(?:{0})\)".format(tgd, jira_browse_url), msg))
+with open(file_path, 'r') as f:
+    lines = f.readlines()
+    oneliner = len(lines) == 1
+    msg = "\n".join(filter(lambda x: not x.startswith('#'), lines))
+
+matches = set(re.findall(jira_identifier, msg))
+
+already_present = set(re.findall(r"\[({0})\]\({1}(?:{0})\)".format(jira_identifier, jira_browse_url), msg))
 missing_links = matches.difference(already_present)
 
 if len(missing_links) == 0:
     sys.exit()
 
-with open(sys.argv[1], 'a') as f:
-    links = "\n\n".join(map(lambda x: "[{0}]({1}{0})".format(x, jira_browse_url), matches))
+with open(file_path, 'a') as f:
+    if oneliner:
+        f.write("\n")
+    f.write("\n")
+    links = "\n".join(map(lambda x: "[{0}]({1}{0})".format(x, jira_browse_url), matches))
     f.write(links)

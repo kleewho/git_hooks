@@ -9,7 +9,12 @@ try:
 except:
     sys.exit()
 
-matched = re.findall("((?:SPARK|TGD)-[0-9]*)", symbolic_ref)
+try:
+    jira_identifier = check_output(['git', 'config', '--get', "githook.jiraidregex"])[0:-1]
+except:
+    sys.exit()
+
+matched = re.findall(jira_identifier, symbolic_ref)
 
 if len(matched) == 0:
     sys.exit()
